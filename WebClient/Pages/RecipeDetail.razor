@@ -1,0 +1,48 @@
+﻿@page "/recipedetail/{RecipeName}/{annonceVersion:int}"
+@using ApiModels
+@inject HttpClient HttpClient;
+
+<h3>Recipe: @RecipeName</h3>
+
+@if (_parameters == null)
+{
+    <p>Loading parameters...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Parameter name</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var parameter in _parameters)
+        {
+            <tr>
+                    <td>@parameter.Id</td>
+                    <td>@parameter.Name</td>
+                    <td>@parameter.Value</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private List<ParameterModel>? _parameters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameters = await HttpClient.GetFromJsonAsync<List<ParameterModel>>($"/api/Parameter/{Uri.EscapeDataString(RecipeName)}/{annonceVersion}");
+    }
+
+    [Parameter]
+    public string RecipeName { get; set; }
+
+    [Parameter]
+    public int annonceVersion { get; set; }
+}

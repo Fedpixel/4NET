@@ -1,0 +1,58 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+
+<PageTitle>Annonces</PageTitle>
+
+<h1>Annonces</h1>
+
+<p>Voici la liste des annonces.</p>
+
+@if (annonces == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>NombreKm</th>
+                <th>NombreCv</th>
+                <th>Energie</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var annonce in annonces)
+            {
+                <tr>
+                    <td>@annonce.Name</td>
+                    <td>@annonce.NombreKm</td>
+                    <td>@annonce.NombreCv</td>
+                    <td>@annonce.Energie</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Annonces[]? annonces;
+
+    protected override async Task OnInitializedAsync()
+    {
+        annonces = await Http.GetFromJsonAsync<Annonces[]>("/api/Annonces");
+    }
+
+    public class Annonces
+    {
+        public string Name { get; set; }
+
+        public int NombreKm { get; set; }
+
+        public int NombreCv { get; set; }
+
+        public string Energie { get; set; }
+
+    }
+}

@@ -1,0 +1,66 @@
+﻿@page "/annonces"
+@inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager;
+@using ApiModels
+
+<PageTitle>Pouet</PageTitle>
+
+<h1>Tu tu tu tu tu</h1>
+
+@if (_annonces == null)
+{
+    <p><em>Chargement des annonces...</em></p>
+}
+else
+{
+    <button type="button" class="btn btn-primary" @onclick="@OpenCreatePopup">Nouvelle annonce</button>
+        
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Nom de l'annonce</th>
+            <th>Derniere version</th>
+                <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var annonce in _annonces)
+        {
+            <tr>
+                <td>@annonce.Name</td>
+                <td>@annonce.LastVersionNumber</td>
+                    <td>
+                        <button type="button" class="btn" @onclick="@(() => OpenRenamePopup(annonce.Name))">Rename</button>
+                        <button type="button" class="btn btn-primary" @onclick="@(() => Openannonce(annonce.Name,annonce.LastVersionNumber))">Open</button>
+                        <button type="button" class="btn" @onclick="@(() => OpenDuplicationPopup(annonce.Name))">@Localizer[nameof(Dictionary.Duplicate)]</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => CreateNewVersion(annonce.Name))">@Localizer[nameof(Dictionary.CreateNewVersion)]</button>
+                        <button type="button" class="btn btn-danger" @onclick="@(() => DeleteLastVersion(annonce.Name))">Delete last </button>
+                        <button type="button" class="btn btn-danger" @onclick="@(() => DeleteAllVersions(annonce.Name))">Delete all</button>
+                    </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div class="modal fade show" id="myModal" style=" display: @ModalDisplay;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>@PopupTitle</h3>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@annonce">
+                        <div class="form-group">
+                            <label for="annonce-name" class="col-form-label">New name:</label>
+                            <InputText type="text" class="form-control" id="annonce-name" @bind-Value="@annonce.annonceName"/>
+                        </div>
+                    </EditForm>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="@CloseModal">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="@OnSave">@SaveButtonTitle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
